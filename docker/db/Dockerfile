@@ -1,2 +1,4 @@
-# Dockerfile für DatenbankContainer MariaDB
-FROM mariadb:10.5
+# Dockerfile für MySQL-Container
+FROM mysql:latest
+
+COPY world.sql /docker-entrypoint-initdb.d/
