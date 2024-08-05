@@ -1,0 +1,56 @@
+version: '3'
+services:
+  # The Application
+  web:
+    build: ./docker/web
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    volumes:
+      - ./src:/var/www/html
+    container_name: web
+    image: web
+    networks:
+      - mynetwork
+
+  # The Database
+  db:
+    build: ./docker/db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    container_name: db
+    image: db
+    networks:
+      - mynetwork
+    volumes: 
+      - db_data:/var/lib/mysql
+
+  # phpmyadmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: myadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    depends_on:
+      - db
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  db_data:
+    driver: local
+    
